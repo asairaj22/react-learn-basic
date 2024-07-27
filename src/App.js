@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
 import { Link, useNavigate } from 'react-router-dom';
-import HomePage from './components/homepage';
+import AppRoutes from './routes';
 
 const App = () => {
   const navigate = useNavigate();
@@ -10,14 +9,8 @@ const App = () => {
     navigate('/');
   };
 
-
-  const value = {
-    key1: 'Home ',
-    key2: 'Page'
-  };
-
+  const value = { key1: 'Home ', key2: 'Page' };
   const [receivedFromHomePage, setReceivedFromHomePage] = useState('Waiting for button click');
-
   const handleData = (data) => {
     setReceivedFromHomePage(data);
   };
@@ -30,12 +23,7 @@ const App = () => {
         <HomePage handler={handleData} pageContent={value}></HomePage>
       </div> */}
 
-      <Routes>
-        <Route path="/" />
-        <Route path="/dashboard" element={<HomePage />} />
-      </Routes>
-
-
+      <AppRoutes />
       <Link to="/dashboard">
         <button>
           Link to Dashboard Screen
@@ -49,7 +37,6 @@ const App = () => {
       <button onClick={handleClick}>
         Back to App Screen
       </button>
-
     </div>
   );
 }
