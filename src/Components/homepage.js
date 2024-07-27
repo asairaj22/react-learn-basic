@@ -30,7 +30,7 @@ const HomePage = (props) => {
 
     return (
         <div>
-            <h2>My Simple React {props.pageContent.key1 + props.pageContent.key2}</h2>
+            {/* <h2>My Simple React {props.pageContent.key1 + props.pageContent.key2}</h2> */}
             <p>Welcome to my simple React home page! This is a basic example of a React project.</p>
             <img src="https://via.placeholder.com/300" alt="Placeholder" />
             <button onClick={sendData}>Send Data</button>
