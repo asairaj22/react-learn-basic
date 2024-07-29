@@ -8,6 +8,25 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.text-webkit-center{
+  text-align: center;
+  text-align: -webkit-center;
+}
+
+.button-style{
+  display: inline-block;
+  font-size: 13px;
+}
+
+.a-style{
+  text-decoration: none !important;
+}
+
+.error-message{
+  color: red;
+  font-size: 12px;
+  vertical-align: top;
 }
