@@ -15,7 +15,8 @@ const App = () => {
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/home">Home</Nav.Link>
             <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
-            <Nav.Link as={Link} to="/profile">Profile</Nav.Link>            
+            <Nav.Link as={Link} to="/structural-directive">Structural Directive</Nav.Link>
+            <Nav.Link as={Link} to="/profile">Profile</Nav.Link>
           </Nav>          
         </Container>
       </Navbar>

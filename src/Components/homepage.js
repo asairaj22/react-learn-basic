@@ -18,17 +18,17 @@ const HomePage = (props) => {
     console.log(props.pageContent);
 
     return (
-        <div>
+        <div className='m-2'>
             <h3>My Simple React {props.pageContent?.key1} {props.pageContent?.key2}</h3>
             <p>Welcome to my simple React home page! This is a basic example of a React project.</p>
-            <img src="https://via.placeholder.com/300" alt="Placeholder" />
+            <img src="https://via.placeholder.com/300" alt="Placeholder" width={150} />
             <div className='mt-2'>
-                <button onClick={sendData}>Send Data</button>
-                <button className='ms-2' onClick={() => navigate('/profile')}>
+                <button className='button-style' onClick={sendData}>Send Data</button>
+                <button className='button-style ms-2' onClick={() => navigate('/profile')}>
                     Buton click to Profile Screen
                 </button>
 
-                <button className='ms-2' onClick={handleClick}>
+                <button className='button-style ms-2' onClick={handleClick}>
                     Back to App Screen
                 </button>
             </div>

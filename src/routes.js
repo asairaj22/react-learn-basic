@@ -3,6 +3,7 @@ import HomePage from './components/homepage';
 import NotFound from './components/not-found';
 import Profile from './components/profile';
 import Dashboard from './components/dashboard';
+import StructuralDirective from './components/structural-directive';
 
 const AppRoutes = () => (
   <Routes>
@@ -10,6 +11,7 @@ const AppRoutes = () => (
     <Route path="/home" element={<HomePage />} />
     <Route path="/dashboard" element={<Dashboard />} />
     <Route path="/profile" element={<Profile />} />
+    <Route path="/structural-directive" element={<StructuralDirective/>}/>
     <Route path="*" element={<NotFound />} />
   </Routes>
 );

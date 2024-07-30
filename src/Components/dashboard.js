@@ -9,7 +9,7 @@ const Dashboard = () => {
     };
 
     return (
-        <div>
+        <div className='m-2'>
             <div>
                 <h3>Welcome to Dashboard Screen</h3>
                 <p>Received data from child: {receivedFromHomePage}</p>

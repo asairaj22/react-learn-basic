@@ -29,4 +29,27 @@ code {
   color: red;
   font-size: 12px;
   vertical-align: top;
+  float: left;
+}
+
+.font-weight-bold{
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.font-style-italic{
+  font-style: italic;
+  font-weight: 400;
+  margin-bottom: 0px;
+}
+
+.hr-center{
+  width: 65%;
+  margin: 10px auto;
+}
+
+.profile-label{
+  text-align: left;
+  float: inline-start;
+  font-size: 14px;
 }
