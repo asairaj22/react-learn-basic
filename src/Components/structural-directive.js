@@ -28,7 +28,7 @@ const StructuralDirective = () => {
                 { trueCondition ? <div>True</div> : <div>False</div>}
                 { falseCondition ? <div>True</div> : <div>False</div>}
                 <div>Tried ngIf in React - {trueCondition ? 'Yes' : 'No'}</div>
-                <button onClick={updateNgIf}>Update ngIF value</button>
+                <button className='button-style' onClick={updateNgIf}>Update ngIF value</button>
                 <hr></hr>
             </div>
             <div>

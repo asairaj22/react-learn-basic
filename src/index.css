@@ -53,3 +53,16 @@ code {
   float: inline-start;
   font-size: 14px;
 }
+
+/* Attribute Directive */
+.color-default{
+  color: black;
+}
+
+.color-red{
+  color: red;
+}
+
+.color-blue{
+  color: blue;
+}

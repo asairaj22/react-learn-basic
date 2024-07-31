@@ -5,6 +5,7 @@ import AppRoutes from './routes';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 
 const App = () => {
   return (
@@ -15,7 +16,15 @@ const App = () => {
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/home">Home</Nav.Link>
             <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
-            <Nav.Link as={Link} to="/structural-directive">Structural Directive</Nav.Link>
+            <NavDropdown title="Directive" id="basic-nav-dropdown">
+              <NavDropdown.Item as={Link} to="/structural-directive">
+                Structural
+              </NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item as={Link} to="/attribute-directive">
+              Attribute
+              </NavDropdown.Item>
+            </NavDropdown>
             <Nav.Link as={Link} to="/profile">Profile</Nav.Link>
           </Nav>          
         </Container>
