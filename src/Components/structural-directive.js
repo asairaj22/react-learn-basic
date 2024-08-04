@@ -3,13 +3,12 @@ import { Trash } from 'react-bootstrap-icons';
 
 const StructuralDirective = () => {
     const [trueCondition, setTrueCondition] = useState(true);
-    const [falseCondition, setFalseCondition] = useState(false);
-    const employeeListCondition = [{name: 'Rik', id: '204'}, {name: 'th', id: ''}, {name: 'vik', id: '990'}];
-    const [employeeList, setEmployeeList] = useState([{name: 'Rik', id: '204'}, {name: 'th', id: ''}, {name: 'vik', id: '990'}]);
+    let empObj = [{name: 'Rik', id: '204'}, {name: 'th', id: ''}, {name: 'vik', id: '990'}];
+    const employeeListCondition = empObj;
+    const [employeeList, setEmployeeList] = useState(empObj);
 
     const updateNgIf = () => {
         setTrueCondition(!trueCondition);
-        setFalseCondition(!falseCondition);
     }
 
     const addEmployee = () => {
@@ -26,7 +25,7 @@ const StructuralDirective = () => {
             <div>
                 <p className='font-weight-bold'>ngIf</p>
                 { trueCondition ? <div>True</div> : <div>False</div>}
-                { falseCondition ? <div>True</div> : <div>False</div>}
+                { !trueCondition ? <div>True</div> : <div>False</div>}
                 <div>Tried ngIf in React - {trueCondition ? 'Yes' : 'No'}</div>
                 <button className='button-style' onClick={updateNgIf}>Update ngIF value</button>
                 <hr></hr>
@@ -42,6 +41,7 @@ const StructuralDirective = () => {
                 {/* key is neccessary or not */}
                 {/* {employeeList.map((item, index) => <div>{item.name}</div>)} */}
                 <hr className='hr-center'></hr>
+
                 <p className='font-style-italic'>Without Condition in Loop 
                 <span>
                     <button className='button-style ms-2' onClick={addEmployee}>Add</button>

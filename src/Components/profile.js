@@ -19,22 +19,19 @@ const Profile = () => {
                 <div>
                     <Container>
                         <Row className="justify-content-md-center">
-                            <Col xs lg="4"></Col>
-                            <Col xs lg="2">
+                            <Col xs="4" lg="2" md="3" sm="4">
                                 <label className='profile-label'>Enter User Name</label>
                             </Col>
-                            <Col xs lg="2">
+                            <Col xs="12" lg="2" md="3" sm="4">
                                 <input className='d-block' defaultValue="test" {...register("userName")} />
                             </Col>
-                            <Col xs lg="4"></Col>
                         </Row>
 
                         <Row className="justify-content-md-center">
-                            <Col xs lg="4"></Col>
-                            <Col xs lg="2">
+                            <Col xs="4" lg="2" md="3" sm="4">
                                 <label className='profile-label'>Enter User ID</label>
                             </Col>
-                            <Col xs lg="2">
+                            <Col xs="12" lg="2" md="3" sm="4">
                                 <input className='d-block' {...register("userID", { 
                                     required: {value: true, message: "UserID is required"},
                                     minLength: { value: 7, message: 'Minimum 7 Character'},
@@ -43,15 +40,13 @@ const Profile = () => {
                                 })} />
                                 {errors.userID && <span className='error-message'>{errors.userID.message}</span>}
                             </Col>
-                            <Col xs lg="4"></Col>
                         </Row>
 
                         <Row className="justify-content-md-center">
-                            <Col xs lg="4"></Col>
-                            <Col xs lg="2">
+                            <Col xs="4" lg="2" md="3" sm="4">
                                 <label className='profile-label'>Enter Mobile Number</label>
                             </Col>
-                            <Col xs lg="2">
+                            <Col xs="12" lg="2" md="3" sm="4">
                                 <input className='d-block' autoComplete='off' {...register("mobileNumber", {
                                     validate: {
                                     positive: v => parseInt(v) > 0 || 'Number should not be negative',
@@ -60,7 +55,6 @@ const Profile = () => {
                                 })}/>
                                 {errors.mobileNumber && <span className='error-message'>{errors.mobileNumber.message}</span>}
                             </Col>
-                            <Col xs lg="4"></Col>
                         </Row>
                     </Container>                    
                 </div>

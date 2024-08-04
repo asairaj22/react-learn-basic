@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const HomePage = (props) => {
+    const h3Ref = useRef();
     const navigate = useNavigate();
 
     const handleClick = () => {
@@ -11,15 +12,15 @@ const HomePage = (props) => {
     const sendData = () => {
         if (typeof props.handler === 'function') {
             props.handler('Data from Homepage');
+        } else {
+            h3Ref.current.innerText = h3Ref.current.innerText + ' - useRef Implemented';
         }
     }
-    
-
     console.log(props.pageContent);
 
     return (
         <div className='m-2'>
-            <h3>My Simple React {props.pageContent?.key1} {props.pageContent?.key2}</h3>
+            <h3 ref={h3Ref}>My Simple React {props.pageContent?.key1} {props.pageContent?.key2}</h3>
             <p>Welcome to my simple React home page! This is a basic example of a React project.</p>
             <img src="https://via.placeholder.com/300" alt="Placeholder" width={150} />
             <div className='mt-2'>

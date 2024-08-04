@@ -66,3 +66,7 @@ code {
 .color-blue{
   color: blue;
 }
+
+.justify-content-md-center {
+  justify-content: center !important;
+}
