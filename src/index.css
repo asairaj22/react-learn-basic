@@ -70,3 +70,15 @@ code {
 .justify-content-md-center {
   justify-content: center !important;
 }
+
+.button-right{
+  float: right;
+}
+
+.container-inline{
+  display: inline-block;
+}
+
+.button-color{
+  background: skyblue;
+}

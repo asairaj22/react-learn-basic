@@ -26,6 +26,7 @@ const App = () => {
               </NavDropdown.Item>
             </NavDropdown>
             <Nav.Link as={Link} to="/profile">Profile</Nav.Link>
+            <Nav.Link as={Link} to="/axiosApi">API(S)</Nav.Link>
           </Nav>          
         </Container>
       </Navbar>
