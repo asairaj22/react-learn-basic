@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import axiosInstance from '../Interceptor/axiosInstance';
 import Table from 'react-bootstrap/Table';
 import { Trash, Pencil } from 'react-bootstrap-icons';
-import Modal from 'react-bootstrap/Modal'
+import Modal from 'react-bootstrap/Modal';
+import ToastPopup from './common/toast';
+import LoadingSpinner from './common/spinner';
 
 const AxiosAPI = () => {
     return (
@@ -17,17 +20,32 @@ const GetCall = () => {
     const [showModal, setShowModal] = useState(false);
     const [newPost, setNewPost] = useState({ title: '', body: '' });
 
+    const [showToast, setShowToast] = useState(false);
+    const [toastBody, setToastBody] = useState();
+    const [toastBg, setToastBg] = useState();
+
+    const [loading, setLoading] = useState(false);
+
+    const showToastWithMessage = (message, bgColor) => {
+        setToastBody(message);
+        setToastBg(bgColor);
+        setShowToast(true);
+    };
+
     const updateJson = async (type, value) => {
         if (type === 'delete') {
             try {
+                setLoading(true);
                 await axios.delete(`https://jsonplaceholder.typicode.com/posts/${value}`);
                 const updatedResponse = apiData?.filter((item) => {
                     return item.id !== value;
                 })
                 setApiData(updatedResponse);
-                alert('Data deleted successfully!');
+                setLoading(false);
+                showToastWithMessage('Data deleted successfully!', 'success');
             } catch (error) {
-                console.error('Error deleting data:', error);
+                setLoading(false);
+                showToastWithMessage(error.toString(), 'danger');
             }
         } else if(type === 'new') {
             setNewPost({ title: '', body: '', userId: ''});
@@ -40,30 +58,38 @@ const GetCall = () => {
 
     const addPosts = async (title, body) => {
         try {
+            setLoading(true);
             const userId = Math.random().toString(36).slice(2);
             const response = await axios.post('https://jsonplaceholder.typicode.com/posts', { title, body, userId });
             setApiData([...apiData, response.data]);
             setShowModal(false);
             setNewPost({ title: '', body: '', userId: ''});
-            alert('Data added successfully!');
+            setLoading(false);
+            showToastWithMessage('Data added successfully!', 'success');
         } catch (error) {
-            console.error('Error adding data:', error);
+            setLoading(false);
+            showToastWithMessage(error.toString(), 'danger');
         }
     };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const getResponse = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
+                setLoading(true);
+                const getResponse = await axiosInstance.get('/posts?_limit=10');
                 setApiData(getResponse.data);
+                setLoading(false);
             } catch (error) {
-                console.error('Error fetching data:', error);
+                setLoading(false);
+                showToastWithMessage(error.toString(), 'danger');
             }
         };
         fetchData();
     }, []);
     return (
         <div className='m-2'>
+            <ToastPopup show={showToast} setShow={setShowToast} body={toastBody} bg={toastBg} />
+            <LoadingSpinner loading={loading} />
             <div className='mt-2 mb-3'>
                 <h4 className='container-inline'>API Data Display</h4>
                 <button className='button-style button-right button-color mt-1' onClick={() => updateJson('new', '')}>Add New Data</button>
@@ -105,6 +131,8 @@ const GetCall = () => {
                 newPost={newPost}
                 setNewPost={setNewPost}
             />
+
+            
             
             {/* <ModalPopup showModal={showModal.isPopup} close={() => setShowModal(false)}></ModalPopup> */}
 
@@ -121,7 +149,6 @@ const GetCall = () => {
 
 const ModalPopup = ({ showModal, close, addPosts, newPost, setNewPost }) => {
     const handleSubmit = (e) => {
-        e.preventDefault();
         addPosts(newPost.title, newPost.body);
     };
 
