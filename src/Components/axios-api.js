@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useRef } from 'react';
 import axiosInstance from '../Interceptor/axiosInstance';
+import { useForm } from "react-hook-form";
 import Table from 'react-bootstrap/Table';
 import { Trash, Pencil } from 'react-bootstrap-icons';
 import Modal from 'react-bootstrap/Modal';
 import ToastPopup from './common/toast';
-import LoadingSpinner from './common/spinner';
+import { useLoading } from './common/LoadingContext';
+import { useAxiosInterceptors } from '../Interceptor/axiosInstance';
 
 const AxiosAPI = () => {
     return (
@@ -16,6 +17,7 @@ const AxiosAPI = () => {
 };
 
 const GetCall = () => {
+    useAxiosInterceptors();
     const [apiData, setApiData] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [newPost, setNewPost] = useState({ title: '', body: '' });
@@ -24,7 +26,11 @@ const GetCall = () => {
     const [toastBody, setToastBody] = useState();
     const [toastBg, setToastBg] = useState();
 
-    const [loading, setLoading] = useState(false);
+    // Sample code to update loader value in component
+    const { setLoading } = useLoading();
+
+    // Fetch API called twice - Below help to stop calling twice
+    const hasFetchedData = useRef(false);
 
     const showToastWithMessage = (message, bgColor) => {
         setToastBody(message);
@@ -35,66 +41,63 @@ const GetCall = () => {
     const updateJson = async (type, value) => {
         if (type === 'delete') {
             try {
-                setLoading(true);
-                await axios.delete(`https://jsonplaceholder.typicode.com/posts/${value}`);
+                await axiosInstance.delete(`/posts/${value}`);
                 const updatedResponse = apiData?.filter((item) => {
                     return item.id !== value;
                 })
                 setApiData(updatedResponse);
-                setLoading(false);
                 showToastWithMessage('Data deleted successfully!', 'success');
             } catch (error) {
-                setLoading(false);
                 showToastWithMessage(error.toString(), 'danger');
             }
-        } else if(type === 'new') {
-            setNewPost({ title: '', body: '', userId: ''});
+        } else if (type === 'new') {
+            setNewPost({ title: '', body: '', userId: '' });
             setShowModal(true);
         } else {
-            setNewPost({ title: value.title, body: value.body, userId: value.userId});
+            setNewPost({ title: value.title, body: value.body, userId: value.userId });
             setShowModal(true);
         }
     }
 
     const addPosts = async (title, body) => {
         try {
-            setLoading(true);
             const userId = Math.random().toString(36).slice(2);
-            const response = await axios.post('https://jsonplaceholder.typicode.com/posts', { title, body, userId });
-            setApiData([...apiData, response.data]);
+            const response = await axiosInstance.post('/posts', { title, body, userId });
+            // Shift the new object
+            // setApiData([...apiData, response.data]);
+            // unshift the new object
+            setApiData([response.data, ...apiData]);
             setShowModal(false);
-            setNewPost({ title: '', body: '', userId: ''});
-            setLoading(false);
+            setNewPost({ title: '', body: '', userId: '' });
             showToastWithMessage('Data added successfully!', 'success');
         } catch (error) {
-            setLoading(false);
             showToastWithMessage(error.toString(), 'danger');
         }
     };
 
     useEffect(() => {
+        if (hasFetchedData.current) return;
+        hasFetchedData.current = true;
+
         const fetchData = async () => {
             try {
-                setLoading(true);
                 const getResponse = await axiosInstance.get('/posts?_limit=10');
                 setApiData(getResponse.data);
-                setLoading(false);
             } catch (error) {
                 setLoading(false);
                 showToastWithMessage(error.toString(), 'danger');
             }
         };
         fetchData();
-    }, []);
+    }, [setLoading]);
     return (
         <div className='m-2'>
             <ToastPopup show={showToast} setShow={setShowToast} body={toastBody} bg={toastBg} />
-            <LoadingSpinner loading={loading} />
             <div className='mt-2 mb-3'>
                 <h4 className='container-inline'>API Data Display</h4>
                 <button className='button-style button-right button-color mt-1' onClick={() => updateJson('new', '')}>Add New Data</button>
             </div>
-            
+
             <Table striped bordered hover>
                 <thead>
                     <tr>
@@ -124,71 +127,69 @@ const GetCall = () => {
                 </tbody>
             </Table>
 
-            <ModalPopup 
-                showModal={showModal} 
-                close={() => setShowModal(false)} 
+            <ModalPopup
+                showModal={showModal}
+                close={() => setShowModal(false)}
                 addPosts={addPosts}
                 newPost={newPost}
-                setNewPost={setNewPost}
-            />
-
-            
-            
-            {/* <ModalPopup showModal={showModal.isPopup} close={() => setShowModal(false)}></ModalPopup> */}
-
-            {/* {apiData ? (
-                // Render your component using the fetched data
-                <p>{apiData[0].id}</p>
-            ) : (
-                // Render a loading state or placeholder
-                <p>Loading...</p>
-            )} */}
+                setNewPost={setNewPost} />
         </div>
     );
 };
 
 const ModalPopup = ({ showModal, close, addPosts, newPost, setNewPost }) => {
-    const handleSubmit = (e) => {
+    const { register, handleSubmit, formState: { errors } } = useForm();
+
+    const onBasicFormSubmit = (data) => {
         addPosts(newPost.title, newPost.body);
     };
 
     return (
         <>
             <Modal show={showModal}>
-            {/* onClick={props.close} */}
                 <Modal.Header>
-                {/* closeButton */}
                     <Modal.Title>New Post</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="add-post-container">
-                        <form>
+                        <form onSubmit={handleSubmit(onBasicFormSubmit)}>
                             <input 
-                                placeholder='Enter Title' 
-                                type="text" 
-                                className="form-control" 
+                                {...register("title", {
+                                    required: { value: true, message: "Title is required" },
+                                    minLength: { value: 3, message: 'Minimum 3 characters' },
+                                })}
+                                placeholder='Enter Title'
+                                type="text"
+                                className="form-control"
                                 value={newPost.title}
                                 onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
                             />
+                            {errors.title && <span className='error-message'>{errors.title.message}</span>}
                             <div className='mt-2'></div>
-                            <textarea 
-                                placeholder="Enter Body" 
-                                className="form-control" 
-                                cols="10" 
+                            <textarea
+                                {...register("body", {
+                                    required: { value: true, message: "Body is required" },
+                                    minLength: { value: 7, message: 'Minimum 7 characters' },
+                                })}
+                                placeholder="Enter Body"
+                                className="form-control"
+                                cols="10"
                                 rows="8"
-                                value={newPost.body} 
+                                value={newPost.body}
                                 onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
                             />
+                            {errors.body && <span className='error-message'>{errors.body.message}</span>}
                         </form>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <button className='button-style button-right button-color' onClick={() => handleSubmit()}>Add Post</button>
+                    <button className='button-style button-right button-color' onClick={handleSubmit(onBasicFormSubmit)}>Add Post</button>
                     <button className='button-style' onClick={close}>Close</button>
                 </Modal.Footer>
             </Modal>
         </>
     );
 }
+
 
 export default AxiosAPI;

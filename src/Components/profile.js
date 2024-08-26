@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 const Profile = () => {
-    const { register, handleSubmit, formState: { errors }, } = useForm();    
+    const { register, handleSubmit, formState: { errors }, } = useForm();
     const onBasicFormSubmit = (data) => {
         alert(JSON.stringify(data));
     }

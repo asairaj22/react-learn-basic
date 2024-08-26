@@ -1,7 +1,9 @@
 import React from 'react';
 import Spinner from 'react-bootstrap/Spinner';
+import { useLoading } from './LoadingContext';
 
-function LoadingSpinner({ loading }) {
+function LoadingSpinner() {
+  const { loading } = useLoading();
   if (!loading) return null;
 
   return (
