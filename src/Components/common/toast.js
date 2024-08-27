@@ -8,11 +8,10 @@ function ToastPopup({ show, setShow, body, bg }) {
     const [time, setTime] = useState(new Date());
 
     useEffect(() => {
-        const timer = setInterval(() => {
+        if (show) {
             setTime(new Date());
-        }, 1000);
-        return () => clearInterval(timer);
-    }, []);
+        }
+    }, [show]);
 
     const readableTime = time.toLocaleTimeString();
 

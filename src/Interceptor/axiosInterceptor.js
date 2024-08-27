@@ -1,16 +1,18 @@
 import axios from 'axios';
 import { useLoading } from '../components/common/LoadingContext';
+import { useToast } from '../components/common/ToastContext';
 import { useEffect } from 'react';
 
-const axiosInstance = axios.create({
+const axiosInterceptor = axios.create({
   baseURL: 'https://jsonplaceholder.typicode.com',
 });
 
 const useAxiosInterceptors = () => {
   const { setLoading } = useLoading();
+  const showToast = useToast();
 
   useEffect(() => {
-    const requestInterceptor = axiosInstance.interceptors.request.use(
+    const requestInterceptor = axiosInterceptor.interceptors.request.use(
       (config) => {
         setLoading(true);
         const accessToken = JSON.parse(localStorage.getItem('token'));
@@ -21,27 +23,29 @@ const useAxiosInterceptors = () => {
       },
       (error) => {
         setLoading(false);
+        showToast(error.toString(), 'danger');
         return Promise.reject(error);
       }
     );
 
-    const responseInterceptor = axiosInstance.interceptors.response.use(
+    const responseInterceptor = axiosInterceptor.interceptors.response.use(
       (response) => {
         setLoading(false);
         return response;
       },
       (error) => {
         setLoading(false);
+        showToast(error.toString(), 'danger');
         return Promise.reject(error);
       }
     );
 
     return () => {
-      axiosInstance.interceptors.request.eject(requestInterceptor);
-      axiosInstance.interceptors.response.eject(responseInterceptor);
+      axiosInterceptor.interceptors.request.eject(requestInterceptor);
+      axiosInterceptor.interceptors.response.eject(responseInterceptor);
     };
-  }, [setLoading]);
+  }, [setLoading, showToast]);
 };
 
-export default axiosInstance;
+export default axiosInterceptor;
 export { useAxiosInterceptors };
