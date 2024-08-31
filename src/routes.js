@@ -6,6 +6,7 @@ import Dashboard from './components/dashboard';
 import StructuralDirective from './components/structural-directive';
 import AttributeDirective from './components/attribute-directive';
 import AxiosAPI from './components/axios-api';
+import UseReducerConcept from './components/LifeCycle/useReducerConcept';
 
 const AppRoutes = () => (
   <Routes>
@@ -16,6 +17,7 @@ const AppRoutes = () => (
     <Route path="/structural-directive" element={<StructuralDirective/>}/>
     <Route path="/attribute-directive" element={<AttributeDirective/>}/>
     <Route path="/axiosApi" element={<AxiosAPI />} />
+    <Route path="/useReducer" element={<UseReducerConcept />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );

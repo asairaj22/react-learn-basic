@@ -98,7 +98,7 @@ const GetCall = () => {
         <div className='m-2'>
             <div className='mt-2 mb-3'>
                 <h4 className='container-inline'>API Data Display</h4>
-                <button className='button-style button-right button-color mt-1' onClick={() => updateJson('new', '')}>Add New Data</button>
+                <button className='button-style button-right button-color mt-1' onClick={() => updateJson('new', '')}>Add New Post</button>
             </div>
 
             <Table striped bordered hover>
