@@ -82,3 +82,7 @@ code {
 .button-color{
   background: skyblue;
 }
+
+.button-space{
+margin-left: 10px;
+}
