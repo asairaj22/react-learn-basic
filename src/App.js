@@ -33,6 +33,7 @@ const App = () => {
                 </NavDropdown>
                 <Nav.Link as={Link} to="/profile">Profile</Nav.Link>
                 <Nav.Link as={Link} to="/axiosApi">API(S)</Nav.Link>
+                <Nav.Link as={Link} to="/lazyComponent">Lazy</Nav.Link>
                 <NavDropdown title="lifeCycle" id="basic-nav-dropdown">
                   <NavDropdown.Item as={Link} to="/useReducer">Use Reducer</NavDropdown.Item>
                 </NavDropdown>

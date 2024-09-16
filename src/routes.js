@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import React, { lazy, Suspense } from 'react';
 import HomePage from './components/homepage';
 import NotFound from './components/not-found';
 import Profile from './components/profile';
@@ -7,6 +8,8 @@ import StructuralDirective from './components/structural-directive';
 import AttributeDirective from './components/attribute-directive';
 import AxiosAPI from './components/axios-api';
 import UseReducerConcept from './components/LifeCycle/useReducerConcept';
+
+const LazyLoadComponent = lazy(() => import('./components/lazy-loading-component')); // Lazy load
 
 const AppRoutes = () => (
   <Routes>
@@ -18,6 +21,15 @@ const AppRoutes = () => (
     <Route path="/attribute-directive" element={<AttributeDirective/>}/>
     <Route path="/axiosApi" element={<AxiosAPI />} />
     <Route path="/useReducer" element={<UseReducerConcept />} />
+    {/* <Route path="/lazyComponent" element={<LazyLoadComponent />} /> */}
+    <Route
+      path="/lazyComponent"
+      element={
+        <Suspense fallback={<div>Loading...</div>}>
+          <LazyLoadComponent />
+        </Suspense>
+      }
+    />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
