@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AppRoutes from './routes';
 import Container from 'react-bootstrap/Container';
@@ -11,6 +11,14 @@ import Loader from './components/common/loader';
 import { ToastProvider } from './components/common/ToastContext';
 
 const App = () => {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    sessionStorage.clear();
+    navigate('/');
+  };
+
+  const isLoggedIn = sessionStorage.getItem('isAuthenticated');
+
   return (
     <LoadingProvider>
       <Loader />
@@ -18,7 +26,7 @@ const App = () => {
         <div className="App">        
           <Navbar bg="dark" data-bs-theme="dark">
             <Container>
-              <Navbar.Brand href="/">React</Navbar.Brand>
+              <Navbar.Brand href="/home">React</Navbar.Brand>
               <Nav className="me-auto">
                 <Nav.Link as={Link} to="/home">Home</Nav.Link>
                 <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
@@ -37,7 +45,12 @@ const App = () => {
                 <NavDropdown title="lifeCycle" id="basic-nav-dropdown">
                   <NavDropdown.Item as={Link} to="/useReducer">Use Reducer</NavDropdown.Item>
                 </NavDropdown>
-              </Nav>          
+              </Nav> 
+              {isLoggedIn && (
+                <Nav className="ms-auto">
+                  <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+                </Nav>
+              )}         
             </Container>
           </Navbar>
           <AppRoutes />      
