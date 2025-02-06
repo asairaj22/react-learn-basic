@@ -3,8 +3,10 @@ import { useLoading } from '../components/common/LoadingContext';
 import { useToast } from '../components/common/ToastContext';
 import { useEffect } from 'react';
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const axiosInterceptor = axios.create({
-  baseURL: 'https://jsonplaceholder.typicode.com',
+  baseURL: apiUrl,
 });
 
 const useAxiosInterceptors = () => {

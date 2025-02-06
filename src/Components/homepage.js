@@ -22,7 +22,7 @@ const HomePage = (props) => {
         <div className='m-2'>
             <h3 ref={h3Ref}>My Simple React {props.pageContent?.key1} {props.pageContent?.key2}</h3>
             <p>Welcome to my simple React home page! This is a basic example of a React project.</p>
-            <img src="https://via.placeholder.com/300" alt="Placeholder" width={150} />
+            <img src={`${process.env.PUBLIC_URL}/logo192.png`} alt="Placeholder" width={150} />
             <div className='mt-2'>
                 <button className='button-style' onClick={sendData}>Send Data</button>
                 <button className='button-style ms-2' onClick={() => navigate('/profile')}>

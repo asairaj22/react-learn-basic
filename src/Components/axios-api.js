@@ -20,7 +20,7 @@ const GetCall = () => {
     useAxiosInterceptors();
     const [apiData, setApiData] = useState(null);
     const [showModal, setShowModal] = useState(false);
-    const [newPost, setNewPost] = useState({ title: '', body: '' });
+    const [newPost, setNewPost] = useState({ item: '', price: '', quantity: '' });
 
     // Code to update Loader/Toast value in component
     const { setLoading } = useLoading();
@@ -32,9 +32,9 @@ const GetCall = () => {
     const updateJson = async (type, value) => {
         if (type === 'delete') {
             try {
-                await axiosInterceptor.delete(`/posts/${value}`);
+                await axiosInterceptor.delete(`/deleteData/${value}`);
                 const updatedResponse = apiData?.filter((item) => {
-                    return item.id !== value;
+                    return item._id !== value;
                 })
                 setApiData(updatedResponse);
                 showToast('Data deleted successfully!', 'success');
@@ -42,18 +42,17 @@ const GetCall = () => {
                 console.log(error);
             }
         } else if (type === 'new') {
-            setNewPost({ title: '', body: '', userId: '', id: '' });
+            setNewPost({ item: '', price: '', quantity: '', });
             setShowModal(true);
         } else {
-            setNewPost({ title: value.title, body: value.body, userId: value.userId, id: value.id });
+            setNewPost({ item: value.item, price: value.price, quantity: value.quantity, _id: value._id });
             setShowModal(true);
         }
     }
 
-    const addPosts = async (title, body) => {
+    const addPosts = async (item, price, quantity) => {
         try {
-            const userId = Math.random().toString(36).slice(2);
-            const response = await axiosInterceptor.post('/posts', { title, body, userId });
+            const response = await axiosInterceptor.post('/addData', { item, price, quantity });
             // Shift the new object
             // setApiData([...apiData, response.data]);
             // unshift the new object
@@ -65,11 +64,11 @@ const GetCall = () => {
         }
     };
 
-    const updatePosts = async (id, userId, title, body) => {
+    const updatePosts = async (id, item, price, quantity) => {
         try {
-            const response = await axiosInterceptor.put(`/posts/${id}`, { id, title, body, userId });
-            const updatedData = apiData.map(item => 
-                item.id === response.data.id ? response.data : item
+            const response = await axiosInterceptor.put('/updateData', { id, item, price, quantity });
+            const updatedData = apiData?.map(obj => 
+                obj._id === response.data._id ? response.data : obj
             );
             setApiData(updatedData);
             setShowModal(false);
@@ -85,8 +84,8 @@ const GetCall = () => {
 
         const fetchData = async () => {
             try {
-                const getResponse = await axiosInterceptor.get('/posts?_limit=10');
-                setApiData(getResponse.data);
+                const getResponse = await axiosInterceptor.get('/getAllData');
+                setApiData(getResponse?.data);
             } catch (error) {
                 setLoading(false);
                 console.log(error);
@@ -105,9 +104,10 @@ const GetCall = () => {
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>User ID</th>
-                        <th>Title</th>
-                        <th>Body</th>
+                        <th>Item</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Date</th>
                         <th>Update</th>
                         <th>Delete</th>
                     </tr>
@@ -118,11 +118,12 @@ const GetCall = () => {
                             return (
                                 <tr key={index}>
                                     <td>{index + 1}</td>
-                                    <td>{element.id}</td>
-                                    <td>{element.title}</td>
-                                    <td>{element.body}</td>
+                                    <td>{element.item}</td>
+                                    <td>{element.price}</td>
+                                    <td>{element.quantity}</td>
+                                    <td>{new Date(element.date).toLocaleDateString()}</td>
                                     <td><Pencil color="blue" size={15} onClick={() => updateJson('edit', element)} /></td>
-                                    <td><Trash color="red" size={15} onClick={() => updateJson('delete', element.id)} /></td>
+                                    <td><Trash color="red" size={15} onClick={() => updateJson('delete', element._id)} /></td>
                                 </tr>
                             )
                         })
@@ -146,15 +147,15 @@ const ModalPopup = ({ showModal, close, addPosts, updatePosts, newPost, setNewPo
     
     useEffect(() => {
         if (showModal) {
-            reset({ id: newPost.id, title: newPost.title, body: newPost.body, userId: newPost.userId });
+            reset({ _id: newPost._id, item: newPost.item, price: newPost.price, quantity: newPost.quantity });
         }
-    }, [showModal, reset, newPost.id, newPost.userId, newPost.title, newPost.body]);
+    }, [showModal, reset, newPost._id, newPost.item, newPost.price, newPost.quantity]);
 
     const onBasicFormSubmit = () => {
-        if (newPost.id) {
-            updatePosts(newPost.id, newPost.userId, newPost.title, newPost.body);
+        if (newPost._id) {
+            updatePosts(newPost._id, newPost.item, newPost.price, newPost.quantity);
         } else {
-            addPosts(newPost.title, newPost.body );
+            addPosts(newPost.item, newPost.price, newPost.quantity );
         }
     };
 
@@ -162,43 +163,55 @@ const ModalPopup = ({ showModal, close, addPosts, updatePosts, newPost, setNewPo
         <>
             <Modal show={showModal}>
                 <Modal.Header>
-                    <Modal.Title>{!newPost.id ? 'New' : 'Update'} Post</Modal.Title>
+                    <Modal.Title>{!newPost._id ? 'New' : 'Update'} Post</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="add-post-container">
                         <form onSubmit={handleSubmit(onBasicFormSubmit)}>
                             <input 
-                                {...register("title", {
+                                {...register("item", {
                                     required: { value: true, message: "Title is required" },
                                     minLength: { value: 3, message: 'Minimum 3 characters' },
                                 })}
                                 placeholder='Enter Title'
                                 type="text"
                                 className="form-control"
-                                value={newPost.title}
-                                onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
+                                value={newPost.item}
+                                onChange={(e) => setNewPost({ ...newPost, item: e.target.value })}
                             />
-                            {errors.title && <span className='error-message'>{errors.title.message}</span>}
+                            {errors.item && <span className='error-message'>{errors.item.message}</span>}
+                            <div className='mt-2'></div>
+                            <input 
+                                {...register("quantity", {
+                                    required: { value: true, message: "Quantity is required" },
+                                })}
+                                placeholder='Enter Quantity'
+                                type="text"
+                                className="form-control"
+                                value={newPost.quantity}
+                                onChange={(e) => setNewPost({ ...newPost, quantity: e.target.value })}
+                            />
+                            {errors.quantity && <span className='error-message'>{errors.quantity.message}</span>}
                             <div className='mt-2'></div>
                             <textarea
-                                {...register("body", {
+                                {...register("price", {
                                     required: { value: true, message: "Body is required" },
                                     minLength: { value: 7, message: 'Minimum 7 characters' },
                                 })}
                                 placeholder="Enter Body"
                                 className="form-control"
-                                cols="10"
-                                rows="8"
-                                value={newPost.body}
-                                onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
+                                cols="1"
+                                rows="1"
+                                value={newPost.price}
+                                onChange={(e) => setNewPost({ ...newPost, price: e.target.value })}
                             />
-                            {errors.body && <span className='error-message'>{errors.body.message}</span>}
+                            {errors.price && <span className='error-message'>{errors.price.message}</span>}
                         </form>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <button className='button-style button-right button-color' onClick={handleSubmit(onBasicFormSubmit)}>
-                        {!newPost.id ? 'Add Post' : 'Update Post'}
+                        {!newPost._id ? 'Add Post' : 'Update Post'}
                     </button>
                     <button className='button-style' onClick={close}>Close</button>
                 </Modal.Footer>
