@@ -11,59 +11,59 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-.text-webkit-center{
+.text-webkit-center {
   text-align: center;
   text-align: -webkit-center;
 }
 
-.button-style{
+.button-style {
   display: inline-block;
   font-size: 13px;
 }
 
-.a-style{
+.a-style {
   text-decoration: none !important;
 }
 
-.error-message{
+.error-message {
   color: red;
   font-size: 12px;
   vertical-align: top;
   float: left;
 }
 
-.font-weight-bold{
+.font-weight-bold {
   font-weight: bold;
   margin-bottom: 5px;
 }
 
-.font-style-italic{
+.font-style-italic {
   font-style: italic;
   font-weight: 400;
   margin-bottom: 0px;
 }
 
-.hr-center{
+.hr-center {
   width: 65%;
   margin: 10px auto;
 }
 
-.profile-label{
+.profile-label {
   text-align: left;
   float: inline-start;
   font-size: 14px;
 }
 
 /* Attribute Directive */
-.color-default{
+.color-default {
   color: black;
 }
 
-.color-red{
+.color-red {
   color: red;
 }
 
-.color-blue{
+.color-blue {
   color: blue;
 }
 
@@ -71,18 +71,18 @@ code {
   justify-content: center !important;
 }
 
-.button-right{
+.button-right {
   float: right;
 }
 
-.container-inline{
+.container-inline {
   display: inline-block;
 }
 
-.button-color{
+.button-color {
   background: skyblue;
 }
 
-.button-space{
-margin-left: 10px;
+.button-space {
+  margin-left: 10px;
 }

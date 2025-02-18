@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axiosInterceptor from '../Interceptor/axiosInterceptor';
 import { useForm } from "react-hook-form";
 import Table from 'react-bootstrap/Table';
-import { Trash, Pencil, CloudArrowDownFill } from 'react-bootstrap-icons';
+import { Trash, Pencil, CloudArrowDownFill, XCircle } from 'react-bootstrap-icons';
 import Modal from 'react-bootstrap/Modal';
 import { useToast } from './common/ToastContext';
 import { useLoading } from './common/LoadingContext';
@@ -62,14 +62,13 @@ const GetCall = () => {
             setNewPost({ item: '', price: '', quantity: '', });
             setShowModal(true);
         } else {
-            setNewPost({ item: value.item, price: value.price, quantity: value.quantity, _id: value._id });
+            setNewPost({ item: value.item, price: value.price, quantity: value.quantity, _id: value._id, filename: value.filename });
             setShowModal(true);
         }
     }
 
     const addPosts = async (item, price, quantity, reactFile) => {
         try {
-            console.log({ item, price, quantity, reactFile });
             const formData = new FormData();
             formData.append('item', item);
             formData.append('price', price);
@@ -87,9 +86,17 @@ const GetCall = () => {
         }
     };
 
-    const updatePosts = async (id, item, price, quantity, reactFile) => {
+    const updatePosts = async (id, item, price, quantity, existingDeletedFileName, reactFile) => {
         try {
-            const response = await axiosInterceptor.put('/updateData', { id, item, price, quantity, reactFile });
+            console.log({ item, price, quantity, reactFile });
+            const formData = new FormData();
+            formData.append('id', id);
+            formData.append('item', item);
+            formData.append('price', price);
+            formData.append('quantity', quantity);
+            formData.append('existingDeletedFileName', existingDeletedFileName);
+            formData.append('reactFile', reactFile);
+            const response = await axiosInterceptor.put('/updateData', formData);
             const updatedData = apiData?.map(obj => 
                 obj._id === response.data._id ? response.data : obj
             );
@@ -179,23 +186,23 @@ const ModalPopup = ({ showModal, close, addPosts, updatePosts, newPost, setNewPo
         if (showModal) {
             reset({ _id: newPost._id, item: newPost.item, price: newPost.price, quantity: newPost.quantity });
         }
-    }, [showModal, reset, newPost._id, newPost.item, newPost.price, newPost.quantity]);
+    }, [showModal, reset, newPost]);
 
     const onBasicFormSubmit = () => {
         if (newPost._id) {
-            updatePosts(newPost._id, newPost.item, newPost.price, newPost.quantity);
+            newPost.existingDeletedFileName = newPost.existingDeletedFileName ? newPost.existingDeletedFileName : null;
+            updatePosts(newPost._id, newPost.item, newPost.price, newPost.quantity, newPost.existingDeletedFileName, newPost.reactFile);
         } else {
             addPosts(newPost.item, newPost.price, newPost.quantity, newPost.reactFile );
         }
     };
 
     const onFileChange = (event) => {
-        if (newPost._id) {
-            updatePosts({ ...newPost, reactFile: event.target.files[0] });
-        } else {
-            setNewPost({ ...newPost, reactFile: event.target.files[0] });
-        }
-        
+        setNewPost({ ...newPost, reactFile: event.target.files[0] });
+    };
+
+    const onFileDelete = () => {
+        setNewPost({ ...newPost, existingDeletedFileName: newPost.filename ? newPost.filename : null, filename: null, reactFile: null });
     };
 
     return (
@@ -246,9 +253,18 @@ const ModalPopup = ({ showModal, close, addPosts, updatePosts, newPost, setNewPo
                             />
                             {errors.price && <span className='error-message'>{errors.price.message}</span>}
 
-                            <div className='mt-2'></div>
-                                <input type="file" className="form-control" onChange={onFileChange}/>
-                            <div className='mt-2'></div>
+                            {newPost.filename && (
+                                <div className="mt-2 mb-2">
+                                    <XCircle color="red" size={15} onClick={onFileDelete}/>
+                                    <span className='ms-2'>{newPost.filename}</span>
+                                </div>
+                            )}
+
+                            {!newPost.filename && (
+                                <div className="mt-2 mb-2">
+                                    <input type="file" className="form-control" onChange={onFileChange}/>
+                                </div>
+                            )}
                         </form>
                     </div>
                 </Modal.Body>
