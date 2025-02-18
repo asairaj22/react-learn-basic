@@ -21,6 +21,10 @@ const useAxiosInterceptors = () => {
         if (accessToken) {
           config.headers.Authorization = `Bearer ${accessToken}`;
         }
+        // Set Content-Type header for multipart/form-data
+        if (config.data instanceof FormData) {
+          config.headers['Content-Type'] = 'multipart/form-data';
+        }
         return config;
       },
       (error) => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axiosInterceptor from '../Interceptor/axiosInterceptor';
 import { useForm } from "react-hook-form";
 import Table from 'react-bootstrap/Table';
-import { Trash, Pencil } from 'react-bootstrap-icons';
+import { Trash, Pencil, CloudArrowDownFill } from 'react-bootstrap-icons';
 import Modal from 'react-bootstrap/Modal';
 import { useToast } from './common/ToastContext';
 import { useLoading } from './common/LoadingContext';
@@ -41,7 +41,24 @@ const GetCall = () => {
             } catch (error) {
                 console.log(error);
             }
-        } else if (type === 'new') {
+        } else if (type === 'download') {
+            try {
+                const response = await axiosInterceptor.post('/downloadFileInAzure', { id: value._id, filename: value.filename }, {
+                    responseType: 'blob',
+                });
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = value.filename || 'downloaded-file.txt';
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                showToast('Download started!', 'success');
+            } catch (error) {
+                console.log(error);
+                showToast('Error downloading file', 'danger');
+            }
+        }else if (type === 'new') {
             setNewPost({ item: '', price: '', quantity: '', });
             setShowModal(true);
         } else {
@@ -50,9 +67,15 @@ const GetCall = () => {
         }
     }
 
-    const addPosts = async (item, price, quantity) => {
+    const addPosts = async (item, price, quantity, reactFile) => {
         try {
-            const response = await axiosInterceptor.post('/addData', { item, price, quantity });
+            console.log({ item, price, quantity, reactFile });
+            const formData = new FormData();
+            formData.append('item', item);
+            formData.append('price', price);
+            formData.append('quantity', quantity);
+            formData.append('reactFile', reactFile);
+            const response = await axiosInterceptor.post('/addData', formData);
             // Shift the new object
             // setApiData([...apiData, response.data]);
             // unshift the new object
@@ -64,9 +87,9 @@ const GetCall = () => {
         }
     };
 
-    const updatePosts = async (id, item, price, quantity) => {
+    const updatePosts = async (id, item, price, quantity, reactFile) => {
         try {
-            const response = await axiosInterceptor.put('/updateData', { id, item, price, quantity });
+            const response = await axiosInterceptor.put('/updateData', { id, item, price, quantity, reactFile });
             const updatedData = apiData?.map(obj => 
                 obj._id === response.data._id ? response.data : obj
             );
@@ -108,6 +131,7 @@ const GetCall = () => {
                         <th>Price</th>
                         <th>Quantity</th>
                         <th>Date</th>
+                        <th>Download</th>
                         <th>Update</th>
                         <th>Delete</th>
                     </tr>
@@ -122,6 +146,12 @@ const GetCall = () => {
                                     <td>{element.price}</td>
                                     <td>{element.quantity}</td>
                                     <td>{new Date(element.date).toLocaleDateString()}</td>
+                                    <td>
+                                    { element.filename ? 
+                                        <CloudArrowDownFill size={15} onClick={() => updateJson('download', element)} /> : 
+                                        null
+                                    }
+                                    </td>
                                     <td><Pencil color="blue" size={15} onClick={() => updateJson('edit', element)} /></td>
                                     <td><Trash color="red" size={15} onClick={() => updateJson('delete', element._id)} /></td>
                                 </tr>
@@ -155,8 +185,17 @@ const ModalPopup = ({ showModal, close, addPosts, updatePosts, newPost, setNewPo
         if (newPost._id) {
             updatePosts(newPost._id, newPost.item, newPost.price, newPost.quantity);
         } else {
-            addPosts(newPost.item, newPost.price, newPost.quantity );
+            addPosts(newPost.item, newPost.price, newPost.quantity, newPost.reactFile );
         }
+    };
+
+    const onFileChange = (event) => {
+        if (newPost._id) {
+            updatePosts({ ...newPost, reactFile: event.target.files[0] });
+        } else {
+            setNewPost({ ...newPost, reactFile: event.target.files[0] });
+        }
+        
     };
 
     return (
@@ -195,10 +234,10 @@ const ModalPopup = ({ showModal, close, addPosts, updatePosts, newPost, setNewPo
                             <div className='mt-2'></div>
                             <textarea
                                 {...register("price", {
-                                    required: { value: true, message: "Body is required" },
-                                    minLength: { value: 7, message: 'Minimum 7 characters' },
+                                    required: { value: true, message: "Price is required" },
+                                    minLength: { value: 2, message: 'Minimum 2 characters' },
                                 })}
-                                placeholder="Enter Body"
+                                placeholder="Enter Price"
                                 className="form-control"
                                 cols="1"
                                 rows="1"
@@ -206,6 +245,10 @@ const ModalPopup = ({ showModal, close, addPosts, updatePosts, newPost, setNewPo
                                 onChange={(e) => setNewPost({ ...newPost, price: e.target.value })}
                             />
                             {errors.price && <span className='error-message'>{errors.price.message}</span>}
+
+                            <div className='mt-2'></div>
+                                <input type="file" className="form-control" onChange={onFileChange}/>
+                            <div className='mt-2'></div>
                         </form>
                     </div>
                 </Modal.Body>
